@@ -1,23 +1,20 @@
-package com.example.bluetooth.enablebluetooth;
+package com.example.bluetooth.bluetoothdiscoverability;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-
     /*
-    * Create a tag to use it on the Logs
-    * */
+      * Create a tag to use it on the Logs
+      * */
     public static final String TAG = "MainActivity";
 
     /*
@@ -53,44 +50,50 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Initialize the Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        //TODO: Initialize the bluetooth by default
+        EnableDisableBluetooth();
 
         //Calls the EnableDisableBluetooth method every time we click the button
         enableBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EnableDisableBluetooth();
+                MakeDeviceVisibleAndConnectable();
             }
         });
     }
 
 
-    /*TODO: Create a broadcas receiver
+    /*TODO: Create a broadcas receiver to receive scann mode
     * The broadcast will be notified when the bluetooth status changes and will
     * perform some tasks we wil define.
     * */
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            //TODO: setting the broadcast to receive when the bluetooth is enabled or disabled
-            if (action.equals(mBluetoothAdapter.ACTION_STATE_CHANGED)) {
-                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, mBluetoothAdapter.ERROR);
+            //TODO: Setting the broadcast to listen when the scan mode change
+            if (action.equals(mBluetoothAdapter.ACTION_SCAN_MODE_CHANGED)) {
+
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, mBluetoothAdapter.ERROR);
 
                 /*
                 * We check what the current bluetooth status is.
                 * We evaluate if in the switch statement below.
                 * */
                 switch (state){
-                    case BluetoothAdapter.STATE_OFF :
-                        resultsView.setText("State off");
+                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE :
+                        resultsView.setText("Scan mode connectable discoverable");
                         break;
-                    case BluetoothAdapter.STATE_TURNING_OFF :
-                        resultsView.setText("State turning off");
+                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE :
+                        resultsView.setText("Scan mode connectable");
                         break;
-                    case  BluetoothAdapter.STATE_ON :
-                        resultsView.setText("State on");
+                    case  BluetoothAdapter.SCAN_MODE_NONE :
+                        resultsView.setText("Scan mode none");
                         break;
-                    case  BluetoothAdapter.STATE_TURNING_ON:
-                        resultsView.setText("State turnning on");
+                    case  BluetoothAdapter.STATE_CONNECTING:
+                        resultsView.setText("State connecting");
+                        break;
+                    case  BluetoothAdapter.STATE_CONNECTED:
+                        resultsView.setText("State connected");
                         break;
                 }
             }
@@ -103,7 +106,15 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(mBroadcastReceiver);
     }
 
-    //TODO: We create a function to enable or disable the Bluetooth
+    public void MakeDeviceVisibleAndConnectable(){
+        //We call the service or component wich makes our device visible
+        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        //Specify the visibility duration
+        intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3000);
+        resultsView.setText("Making your device visible ....");
+    }
+
+
     public void EnableDisableBluetooth(){
         String message = "";
 
@@ -116,28 +127,17 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if(!mBluetoothAdapter.isEnabled()){
-            message = "The bluetooth was enable and now is disabled.";
-            mBluetoothAdapter.disable();
+        if(mBluetoothAdapter.isEnabled()){
+            message = "The bluetooth is already enable";
             resultsView.setText(message);
-            IntentFilter intentFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-            registerReceiver(mBroadcastReceiver, intentFilter);
             return;
         }
 
-        if(mBluetoothAdapter.isEnabled()) {
+        if(!mBluetoothAdapter.isEnabled()) {
             message = "The bluetooth was disable and now is enable";
-
-            /*
-            * An intent calls components or services in the applications. For example we
-            * can call the nex screen UI of our app. Or we can activate the bluetooth.
-            * */
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivity(enableIntent); // initilize that service or component we previous called in out intent.
-
-            resultsView.setText(message); //Set the results in the app
-
-
+            startActivity(enableIntent);
+            resultsView.setText(message);
             IntentFilter intentFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
             registerReceiver(mBroadcastReceiver, intentFilter);
             return;
