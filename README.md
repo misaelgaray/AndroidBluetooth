@@ -1,7 +1,7 @@
 # AndroidBluetooth
 
 ## Dowload the code
-Click the green "Clone or Download" button. The select the Download ZIP option.
+Click the green "Clone or Download" button. Then select the Download ZIP option.
 
 ## Repository structure
 There is a folder for each Android project shown in the tutorials. The projects are well explained
