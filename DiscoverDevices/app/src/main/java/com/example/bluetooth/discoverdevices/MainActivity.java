@@ -1,15 +1,20 @@
 package com.example.bluetooth.discoverdevices;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +42,16 @@ public class MainActivity extends AppCompatActivity {
      * */
     BluetoothAdapter mBluetoothAdapter;
 
+    /**
+     * TODO: Create a Array that will contains all found devices
+     * */
+    ArrayList<BluetoothDevice> devices = new ArrayList<>();
+
+    /*
+    * Reference to our list UI component
+    * */
+    DeviceListAdapter adapter;
+    ListView devicesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,24 +60,28 @@ public class MainActivity extends AppCompatActivity {
 
         /* Here we call the button we declared in the UI by its id */
         enableBtn = (Button) findViewById(R.id.enableBtn);
+        devicesList = (ListView) findViewById(R.id.devicesList);
 
         //TODO: Initialize the Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        //TODO: Initialize the bluetooth by default
+        //TODO: Initialize the bluetooth and make de device visible by default
         EnableDisableBluetooth();
+        MakeDeviceVisibleAndConnectable();
 
         //Calls the EnableDisableBluetooth method every time we click the button
         enableBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MakeDeviceVisibleAndConnectable();
+
+
+                DiscoverDevices();
             }
         });
     }
 
 
-    /*TODO: Create a broadcas receiver to receive scann mode
+    /*TODO: Create a broadcas receiver to detect devices
     * The broadcast will be notified when the bluetooth status changes and will
     * perform some tasks we wil define.
     * */
@@ -70,26 +89,12 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             //TODO: Setting the broadcast to listen when the scan mode change
-            if (action.equals(mBluetoothAdapter.ACTION_SCAN_MODE_CHANGED)) {
+            if (action.equals(BluetoothDevice.ACTION_FOUND)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                devices.add(device);
 
-                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, mBluetoothAdapter.ERROR);
-
-                /*
-                * We check what the current bluetooth status is.
-                * We evaluate if in the switch statement below.
-                * */
-                switch (state){
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE :
-                        break;
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE :
-                        break;
-                    case  BluetoothAdapter.SCAN_MODE_NONE :
-                        break;
-                    case  BluetoothAdapter.STATE_CONNECTING:
-                        break;
-                    case  BluetoothAdapter.STATE_CONNECTED:
-                        break;
-                }
+                adapter = new DeviceListAdapter(context, R.layout.device_adapter, devices);
+                devicesList.setAdapter(adapter);
             }
         }
     };
@@ -98,6 +103,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mBroadcastReceiver);
+    }
+
+    /*
+    * TODO: Create a method to discover the available devices
+    * */
+    public void DiscoverDevices(){
+        if(mBluetoothAdapter.isDiscovering()){
+            Log.d(TAG, "Discovering mode disabled");
+            mBluetoothAdapter.cancelDiscovery();
+
+            mBluetoothAdapter.startDiscovery();
+
+            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(mBroadcastReceiver, filter);
+        }else{
+            mBluetoothAdapter.startDiscovery();
+            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(mBroadcastReceiver, filter);
+        }
     }
 
     public void MakeDeviceVisibleAndConnectable(){

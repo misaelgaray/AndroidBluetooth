@@ -106,6 +106,9 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(mBroadcastReceiver);
     }
 
+    /*
+    * TODO: write a function to make the device visible
+    * */
     public void MakeDeviceVisibleAndConnectable(){
         //We call the service or component wich makes our device visible
         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
