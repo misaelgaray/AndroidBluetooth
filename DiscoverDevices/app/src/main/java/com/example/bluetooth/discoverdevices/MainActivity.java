@@ -1,4 +1,4 @@
-package com.example.bluetooth.bluetoothdiscoverability;
+package com.example.bluetooth.discoverdevices;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
     /*
       * Create a tag to use it on the Logs
       * */
@@ -26,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     * Declare a TextView component to write the results, this variable
     * saves the reference from the UI
     * */
-    TextView resultsView;
 
 
     /**
@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
         /* Here we call the button we declared in the UI by its id */
         enableBtn = (Button) findViewById(R.id.enableBtn);
-        resultsView = (TextView) findViewById(R.id.resultsView);
 
         //TODO: Initialize the Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -81,19 +80,14 @@ public class MainActivity extends AppCompatActivity {
                 * */
                 switch (state){
                     case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE :
-                        resultsView.setText("Scan mode connectable discoverable");
                         break;
                     case BluetoothAdapter.SCAN_MODE_CONNECTABLE :
-                        resultsView.setText("Scan mode connectable");
                         break;
                     case  BluetoothAdapter.SCAN_MODE_NONE :
-                        resultsView.setText("Scan mode none");
                         break;
                     case  BluetoothAdapter.STATE_CONNECTING:
-                        resultsView.setText("State connecting");
                         break;
                     case  BluetoothAdapter.STATE_CONNECTED:
-                        resultsView.setText("State connected");
                         break;
                 }
             }
@@ -111,10 +105,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         //Specify the visibility duration
         intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3000);
-        resultsView.setText("Making your device visible ....");
-
-        IntentFilter intentFilter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-        registerReceiver(mBroadcastReceiver, intentFilter);
     }
 
 
@@ -126,13 +116,11 @@ public class MainActivity extends AppCompatActivity {
         * */
         if(mBluetoothAdapter == null){
             message = "This device has not bluetooth capabilities";
-            resultsView.setText(message);
             return;
         }
 
         if(mBluetoothAdapter.isEnabled()){
             message = "The bluetooth is already enable";
-            resultsView.setText(message);
             return;
         }
 
@@ -140,10 +128,8 @@ public class MainActivity extends AppCompatActivity {
             message = "The bluetooth was disable and now is enable";
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivity(enableIntent);
-            resultsView.setText(message);
             return;
         }
 
     }
-
 }
