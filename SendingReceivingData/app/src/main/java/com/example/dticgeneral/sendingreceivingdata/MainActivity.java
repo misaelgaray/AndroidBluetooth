@@ -52,9 +52,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button sendBtn;
 
 
-    //TODO:
+    //TODO: Add a UUID the same that is in the BluetoothConnectionService
     private  static final UUID INSECURE_ID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+    //TODO; Declare a bluetooth device
     BluetoothDevice bluetoothDevice;
+    //TODO: Create a BluetoothConnectionService object.
+    BluetoothConnectionService bluetoothConnection;
 
     /**
      * Creting a BluetoothAdapter variable
