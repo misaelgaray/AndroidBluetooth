@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     TextView resultsText;
 
     /**
-     * TODO: Creting a BluetoothAdapter variable
+     * Creting a BluetoothAdapter variable
      * BluetoohAdapter class is the starter point to perform
      * bluetooth tasks like find devices and others related to
      * sync with devices.
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     BluetoothAdapter mBluetoothAdapter;
 
     /**
-     * TODO: Create a Array that will contains all found devices
+     * Create a Array that will contains all found devices
      * */
     ArrayList<BluetoothDevice> devices = new ArrayList<>();
 
@@ -67,10 +67,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         devicesList = (ListView) findViewById(R.id.devicesList);
         resultsText = (TextView) findViewById(R.id.resultsText);
 
-        //TODO: Initialize the Bluetooth adapter
+        //Initialize the Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        //TODO: Initialize the bluetooth and make de device visible by default
+        //Initialize the bluetooth and make de device visible by default
         EnableDisableBluetooth();
         MakeDeviceVisibleAndConnectable();
 
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(mBondBroadcastReceiver, filter);
 
+        //TODO:Adding click item listener feature to the list of devices
         devicesList.setOnItemClickListener(MainActivity.this);
 
 
