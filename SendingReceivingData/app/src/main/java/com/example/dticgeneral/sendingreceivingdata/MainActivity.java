@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -114,7 +115,32 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 DiscoverDevices();
             }
         });
+
+        //TODO: Add a listener for connection
+        connectoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startConnection();
+            }
+        });
+
+        //TODO: Add a listener to send message
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: Convert the message written to bytes
+                byte[] bytes = messageInput.getText().toString().getBytes(Charset.defaultCharset());
+                bluetoothConnection.write(bytes);
+            }
+        });
     }
+
+
+    //TODO: Method that calls the startBTConnection and sset the paramethers
+    public void startConnection(){
+        startBTConnection(bluetoothDevice, INSECURE_ID);
+    }
+
 
     /*
     * TODO: Method that starts bluetooth connetions
@@ -122,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void startBTConnection(BluetoothDevice device, UUID uuid){
         resultsText.setText("startBTConnections: Initializinf RFCOM BLuetooth connection,");
 
-        
+        bluetoothConnection.startClient(device,uuid);
     }
 
     private  final BroadcastReceiver mBondBroadcastReceiver = new BroadcastReceiver() {
@@ -133,6 +159,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if(device.getBondState() == BluetoothDevice.BOND_BONDED){
                     resultsText.setText("THE DEVICE IS BOUNDED");
+
+                    //TODO: assign a bonded device
+                    bluetoothDevice  = device;
                 }
                 if(device.getBondState() == BluetoothDevice.BOND_BONDING){
                     resultsText.setText("THE DEVICE IS BOUNDING");
@@ -221,7 +250,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
 
-    //TODO: Override method that detects the selected item in the Devices list
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         mBluetoothAdapter.cancelDiscovery();
@@ -231,6 +259,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
             resultsText.setText("Trying to connect with " + name);
             devices.get(i).createBond();
+
+            //TODO: Assign the selected device and create an instance of bluetoothConnectionService class
+            bluetoothDevice = devices.get(i);
+            bluetoothConnection = new BluetoothConnectionService(MainActivity.this);
         }
     }
 }

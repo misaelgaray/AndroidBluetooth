@@ -60,6 +60,7 @@ public class BluetoothConnectionService {
         this.context = context;
         //Getting the default addapte
         this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        start();
     }
 
 
@@ -232,7 +233,11 @@ public class BluetoothConnectionService {
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
-            progressDialog.dismiss();
+            try{
+                progressDialog.dismiss();
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
 
             // Get the BluetoothSocket input and output streams
             try {
