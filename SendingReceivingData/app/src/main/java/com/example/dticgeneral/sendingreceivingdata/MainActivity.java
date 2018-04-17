@@ -23,7 +23,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.UUID;
 
-//TODO: Implements the OnItemClickListener to check the selected item from the list
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     /*
@@ -174,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     };
 
 
-    /*TODO: Create a broadcas receiver to detect devices
+    /*
      * The broadcast will be notified when the bluetooth status changes and will
      * perform some tasks we wil define.
      * */

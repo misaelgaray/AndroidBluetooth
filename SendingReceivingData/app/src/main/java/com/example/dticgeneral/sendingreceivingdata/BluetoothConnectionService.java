@@ -218,6 +218,7 @@ public class BluetoothConnectionService {
     }
 
     /**
+     * TODO: Create a class that manages the operations between devices once they are connected
      * This thread runs during a connection with a remote device.
      * It handles all incoming and outgoing transmissions.
      */
@@ -251,6 +252,7 @@ public class BluetoothConnectionService {
             mmOutStream = tmpOut;
         }
 
+        //TODO: Listen every message send to this device
         public void run(){
             byte[] buffer = new byte[1024];
             int bytes;
@@ -269,7 +271,7 @@ public class BluetoothConnectionService {
             }
         }
 
-        //Sends data to the remote remote device
+        //TODO: Sends data to the remote remote device
         public void write(byte [] bytes){
             String text = new String(bytes, Charset.defaultCharset());
             Log.d(TAG, "Writing to output stream " + text);
@@ -300,8 +302,8 @@ public class BluetoothConnectionService {
 
 
     /**
-     * Write to the ConnectedThread in an unsynchronized manner
-     *
+     * TODO: Write to the ConnectedThread in an unsynchronized manner
+     *This method is called from the MainActivity to send data
      * @param out The bytes to write
      * @see ConnectedThread#write(byte[])
      */
